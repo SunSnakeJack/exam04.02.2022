@@ -20,6 +20,8 @@ app.get('/', (req, res) => {
 })
 
 require('./app/routes/employee.route')(app)
+require('./app/routes/company.route')(app)
+require('./app/routes/project.route')(app)
 
 app.listen(PORT, () =>{
     console.log(`Server is running on port ${PORT}`)

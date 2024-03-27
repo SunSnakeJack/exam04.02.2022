@@ -1,6 +1,9 @@
 const db = require('../models/index')
 const Employee = db.employee
 const Setting = db.setting
+const Company = db.company
+const Project = db.project
+const Employee_project = db.employee_project
 
 exports.findAll = (req, res) => {
     try {
@@ -9,6 +12,12 @@ exports.findAll = (req, res) => {
             include: [{
                 model: Setting,
                 attributes: ["theme"]
+            }, {
+                model: Company,
+                attributes: ["name"]
+            }, {
+                model: Project,
+                attributes: ["name"]
             }]
         })
             .then(employee => {
@@ -33,7 +42,8 @@ exports.create = (req, res) => {
 
         const employeeObj = {
             name: req.body.name,
-            position: req.body.position
+            position: req.body.position,
+            companyId: req.body.companyId
         }
 
         Employee.create(employeeObj)
@@ -41,7 +51,7 @@ exports.create = (req, res) => {
                 Setting.create({
                     theme: req.body.theme,
                     employeeId: data.id
-            })
+                })
                 res.status(200).json({ message: "message  Employee create." })
             })
             .catch(error => {
@@ -53,10 +63,25 @@ exports.create = (req, res) => {
     }
 }
 
+exports.addEmployeeToProject = (req,res) => {
+    const junctionAttributes = {
+        employeeId: req.body.employeeId,
+        projectId: req.body.projectId
+    } 
+    Employee_project.create(junctionAttributes)
+    .then(res.status(200).json({message: "Employee project created"}))
+    .catch(error => res.status(400).json({message: error.message}))
+}
+
 exports.findOne = (req, res) => {
     try {
         const id = req.params.id
-        Employee.findByPk(id)
+        Employee.findByPk(id, {
+            include: [{
+                model: Company,
+                attributes: ["name"]
+            }]
+        })
             .then(data => {
                 res.status(200).json(data)
             })
@@ -80,12 +105,12 @@ exports.update = (req, res) => {
             where: { id: req.params.id },
         })
             .then(data => {
-                  if(data ==1){
-                    res.status(200).json({message: "Updated Successfully"})
-                  }
+                if (data == 1) {
+                    res.status(200).json({ message: "Updated Successfully" })
+                }
             })
             .catch(error => {
-                res.status(400).json({ message: error.message})
+                res.status(400).json({ message: error.message })
             })
     } catch {
         res.status(500).json({ message: error.message })
@@ -95,15 +120,15 @@ exports.update = (req, res) => {
 exports.delete = (req, res) => {
     try {
 
-        Employee.destroy({where: {id:req.params.id}})
-        .then(data =>{
-            if(data ==1){
-                res.status(200).json({message: "Delete Successfully"})
-              }
-        })
-        .catch(error => {
-            res.status(400).json({ message: error.message})
-        })
+        Employee.destroy({ where: { id: req.params.id } })
+            .then(data => {
+                if (data == 1) {
+                    res.status(200).json({ message: "Delete Successfully" })
+                }
+            })
+            .catch(error => {
+                res.status(400).json({ message: error.message })
+            })
     } catch (error) {
         res.status(500).json({ message: error.message })
     }
