@@ -2,7 +2,7 @@ module.exports = (sequelize, Datatype) => {
     const db = require('../models')
     const Employee = db.employee
     const Project = db.project
-    const Employee_project = sequelize.define("Employee_project", {
+    const employee_project = sequelize.define("Employee_project", {
         employeeId: {
             type: Datatype.INTEGER,
             references:{
@@ -18,5 +18,5 @@ module.exports = (sequelize, Datatype) => {
             }
         }
     })
-    return Employee_project;
+    return employee_project;
 }   

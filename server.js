@@ -11,7 +11,7 @@ app.use(express.json())
 app.use(express.urlencoded({ extended:true}))
 
 const db = require('./app/models')
-db.sequelize.sync({force:false}).then(() => {
+db.sequelize.sync({force:true}).then(() => {
     console.log('Database syncing....   Success');
 })
 
@@ -27,4 +27,5 @@ app.listen(PORT, () =>{
     console.log(`Server is running on port ${PORT}`)
 })
 
+//timestamp 2021-03-11 22:51:50.505325312
 

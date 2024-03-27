@@ -3,7 +3,7 @@ const Employee = db.employee
 const Setting = db.setting
 const Company = db.company
 const Project = db.project
-const Employee_project = db.employee_project
+const employee_project = db.employee_project
 
 exports.findAll = (req, res) => {
     try {
@@ -64,14 +64,18 @@ exports.create = (req, res) => {
 }
 
 exports.addEmployeeToProject = (req,res) => {
-    const junctionAttributes = {
-        employeeId: req.body.employeeId,
-        projectId: req.body.projectId
-    } 
-    Employee_project.create(junctionAttributes)
-    .then(res.status(200).json({message: "Employee project created"}))
-    .catch(error => res.status(400).json({message: error.message}))
-}
+    try{
+        const junctionAttributes = {
+            employeeId: req.body.employeeId,
+            projectId: req.body.projectId
+        } 
+        employee_project.create(junctionAttributes)
+        .then(res.status(200).json({message: "Employee project created"}))
+        .catch(error => res.status(400).json({message: error.message}))
+    }catch(error){
+        res.status(500).json({message: error.message})
+    }
+    }
 
 exports.findOne = (req, res) => {
     try {
