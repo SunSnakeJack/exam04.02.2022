@@ -1,57 +1,38 @@
 const db = require('../models/index')
-const Employee = db.employee
-const Setting = db.setting
-const Company = db.company
-const Project = db.project
-const Employee_project = db.employee_project
+const Student_university = db.student_university
+const Student = db.student
+const University = db.university
 
 exports.findAll = (req, res) => {
     try {
-        Employee.findAll({
-            attributes: ["id", "name", "position"],
-            include: [{
-                model: Setting,
-                attributes: ["theme"]
-            }, {
-                model: Company,
-                attributes: ["name"]
-            }, {
-                model: Project,
-                attributes: ["name"]
-            }]
+        Student.findAll({
+            attributes:["id","name"]
         })
-            .then(employee => {
-                // res.send(employee)
-                // res.json(employee)
-                res.status(200).json(employee)
+            .then(student => {
+                res.status(200).json(student)
             })
             .catch(error => {
-                console.log(error.message)
+                res.status(400).json({ message: error.message })
             })
     } catch (e) {
-        console.log(e)
+        res.status(500).json({ message: error.message })
     }
 }
 
 exports.create = (req, res) => {
     try {
-        if (!req.body.name || !req.body.position) {
+        if (!req.body.name) {
             res.status(400).json({ message: "คือมึงยังไม่ได้ใส่อะไรเข้าไป!! ไอน้ำตกหมู!!" })
             return;
         }
 
-        const employeeObj = {
-            name: req.body.name,
-            position: req.body.position,
-            companyId: req.body.companyId
+        const sufeeyanObj = {
+            id: req.body.id,
+            name: req.body.name
         }
 
-        Employee.create(employeeObj)
+        Student.create(sufeeyanObj)
             .then(data => {
-                Setting.create({
-                    theme: req.body.theme,
-                    employeeId: data.id
-                })
                 res.status(200).json({ message: "message  Employee create." })
             })
             .catch(error => {
@@ -63,29 +44,17 @@ exports.create = (req, res) => {
     }
 }
 
-exports.addEmployeeToProject = (req,res) => {
-    try{
-        const junctionAttributes = {
-            employeeId: req.body.employeeId,
-            projectId: req.body.projectId
-        } 
-        Employee_project.create(junctionAttributes)
-        .then(res.status(200).json({message: "Employee project created"}))
-        .catch(error => res.status(400).json({message: error.message}))
-    }catch(error){
-        res.status(500).json({message: error.message})
-    }
-    }
-
 exports.findOne = (req, res) => {
     try {
         const id = req.params.id
-        Employee.findByPk(id, {
-            include: [{
-                model: Company,
-                attributes: ["name"]
-            }]
-        })
+        Student.findByPk(id,
+            {
+                attributes:["id","name"],
+                include:[{
+                    model: University,
+                    attributes: ["name","degree"]
+                }]
+            })
             .then(data => {
                 res.status(200).json(data)
             })
@@ -93,7 +62,6 @@ exports.findOne = (req, res) => {
                 res.status(400).json({ message: error.message })
             })
     } catch (error) {
-        console.log(error.message)
         res.status(500).json({ message: error.message })
     }
 }
@@ -101,11 +69,10 @@ exports.findOne = (req, res) => {
 exports.update = (req, res) => {
     try {
         // const id = req.params.id
-        const employeeObj = {
-            name: req.body.name,
-            position: req.body.position
+        const studentObj = {
+            name: req.body.name
         }
-        Employee.update(employeeObj, {
+        Student.update(studentObj, {
             where: { id: req.params.id },
         })
             .then(data => {
@@ -124,7 +91,7 @@ exports.update = (req, res) => {
 exports.delete = (req, res) => {
     try {
 
-        Employee.destroy({ where: { id: req.params.id } })
+        Student.destroy({ where: { id: req.params.id } })
             .then(data => {
                 if (data == 1) {
                     res.status(200).json({ message: "Delete Successfully" })

@@ -1,11 +1,8 @@
 const express = require('express');
 const app = express();
-const cors = require('cors')
 
 require("dotenv").config();
 const PORT = process.env.PORT || 5000;
-
-app.use(cors());
 
 //parse request of content type  - application/json
 app.use(express.json())
@@ -18,13 +15,13 @@ db.sequelize.sync({force:false}).then(() => {
     console.log('Database syncing....   Success');
 })
 
-app.get('/', (req, res) => {
-    res.send('Default Route')
-})
+// app.get('/', (req, res) => {
+//     res.send('Default Route')
+// })
 
-require('./app/routes/employee.route')(app)
-require('./app/routes/company.route')(app)
-require('./app/routes/project.route')(app)
+require('./app/routes/student.route')(app)
+require('./app/routes/university.route')(app)
+
 
 app.listen(PORT, () =>{
     console.log(`Server is running on port ${PORT}`)

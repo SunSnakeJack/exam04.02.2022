@@ -2,7 +2,7 @@ module.exports = {
     HOST: "localhost",
     USER: "postgres",
     PASSWORD: "1234",
-    DB: "oneToOne_db",
+    DB: "manyToMany_db",
     dialect: "postgres",
     port:5432,
     pool:{
